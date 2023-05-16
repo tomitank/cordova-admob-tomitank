@@ -1,0 +1,27 @@
+{
+  "targets": {
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "build-lib",
+        "build-scripts"
+      ]
+    },
+    "build-lib": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cordova-plus plugin build --input=./src/www/admob.ts --lib --esm",
+        "cwd": ""
+      },
+      "outputs": ["esm", "lib", "www"]
+    },
+    "build-scripts": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p scripts",
+        "cwd": ""
+      },
+      "outputs": ["scripts/*.js"]
+    }
+  }
+}

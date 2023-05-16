@@ -1,0 +1,6 @@
+{
+  "name": "@admob-tomitank-internal/tsconfig",
+  "version": "1.0.0",
+  "private": true,
+  "main": "tsconfig.json"
+}
