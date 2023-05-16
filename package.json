@@ -6,6 +6,7 @@
   "module": "esm/index.js",
   "typings": "esm/index.d.ts",
   "scripts": {
+    "build": "nx build",
     "prepublishOnly": "nx build",
     "version": "npx cordova-plus plugin version",
     "test": "cordova-plus plugin test"
@@ -28,7 +29,8 @@
     "nx": "16.1.4",
     "nx-cloud": "latest",
     "rollup": "^2.78.0",
-    "typescript": "~4.7.4"
+    "typescript": "~4.7.4",
+    "tslib": "^2.5.0"
   },
   "author": "tomitank",
   "license": "MIT",
