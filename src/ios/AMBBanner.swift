@@ -271,6 +271,7 @@ class AMBBanner: AMBAdBase, GADBannerViewDelegate, GADAdSizeDelegate {
 
     private func addBannerView(_ offset: CGFloat) {
         let rootView = Self.rootView
+        let guide = rootView.safeAreaLayoutGuide
         bannerView.translatesAutoresizingMaskIntoConstraints = false
         rootView.addSubview(bannerView)
         rootView.bringSubviewToFront(bannerView)
@@ -278,16 +279,14 @@ class AMBBanner: AMBAdBase, GADBannerViewDelegate, GADAdSizeDelegate {
             bannerView.centerXAnchor.constraint(equalTo: rootView.centerXAnchor)
         ]
         switch position {
-        case AMBBannerPosition.top:
-            constraints += [
-                bannerView.topAnchor.constraint(equalTo: rootView.topAnchor,
-                                                constant: offset)
-            ]
-        default:
-            constraints += [
-                bannerView.bottomAnchor.constraint(equalTo: rootView.bottomAnchor,
-                                                   constant: offset * -1)
-            ]
+            case AMBBannerPosition.top:
+                constraints += [
+                    bannerView.topAnchor.constraint(equalTo: guide.topAnchor, constant: offset)
+                ]
+            default:
+                constraints += [
+                    bannerView.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: offset * -1)
+                ]
         }
         NSLayoutConstraint.activate(constraints)
     }
