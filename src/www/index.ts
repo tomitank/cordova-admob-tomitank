@@ -17,6 +17,7 @@ import {
   Platforms,
   RequestConfig,
   start,
+  AdSizeType,
   TrackingAuthorizationStatus,
 } from './shared'
 
@@ -42,7 +43,7 @@ export class AdMob {
   public readonly NativeAd = NativeAd
   public readonly RewardedAd = RewardedAd
   public readonly RewardedInterstitialAd = RewardedInterstitialAd
-
+  public readonly AdSizeType = AdSizeType
   public readonly Events = Events
   public readonly TrackingAuthorizationStatus = TrackingAuthorizationStatus
 
