@@ -14,7 +14,7 @@ extension AMBHelperAdapter {
 }
 
 class AMBHelper {
-    static let window = UIApplication.shared.keyWindow!
+    static let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow })!
 
     static var topAnchor: NSLayoutYAxisAnchor {
         if #available(iOS 11.0, *) {
@@ -77,8 +77,8 @@ extension AMBCoreContext {
         return optFloat("appVolume")
     }
 
-    func optId() -> Int? {
-        return optInt("id")
+    func optId() -> String? {
+        return optString("id")
     }
 
     func optPosition() -> String {
@@ -102,7 +102,7 @@ extension AMBCoreContext {
         if let ad = optAd() {
             return ad
         } else {
-            reject("Ad not found: \(optId() ?? -1)")
+            reject("Ad not found: \(optId() ?? "-")")
             return nil
         }
     }
@@ -179,16 +179,20 @@ extension AMBCoreContext {
             requestConfiguration.maxAdContentRating = maxAdContentRating
         }
         if let tag = optChildDirectedTreatmentTag() {
-            requestConfiguration.tag(forChildDirectedTreatment: tag)
+            requestConfiguration.tagForChildDirectedTreatment = NSNumber(value: tag)
         }
         if let tag = optUnderAgeOfConsentTag() {
-            requestConfiguration.tagForUnderAge(ofConsent: tag)
+            requestConfiguration.tagForUnderAgeOfConsent = NSNumber(value: tag)
         }
         if let testDevices = optTestDeviceIds() {
             requestConfiguration.testDeviceIdentifiers = testDevices
         }
         if let sameAppKey = optBool("sameAppKey") {
-            requestConfiguration.setSameAppKeyEnabled(sameAppKey)
+            requestConfiguration.setPublisherFirstPartyIDEnabled(sameAppKey)
+        }
+        if let
+        publisherFirstPartyIDEnabled = optBool("publisherFirstPartyIDEnabled") {
+            requestConfiguration.setPublisherFirstPartyIDEnabled(publisherFirstPartyIDEnabled)
         }
 
         resolve()
@@ -196,13 +200,13 @@ extension AMBCoreContext {
 }
 
 class AMBCoreAd: NSObject {
-    static var ads = [Int: AMBCoreAd]()
+    static var ads = [String: AMBCoreAd]()
 
-    let id: Int
+    let id: String
     let adUnitId: String
     let adRequest: GADRequest
 
-    init(id: Int, adUnitId: String, adRequest: GADRequest) {
+    init(id: String, adUnitId: String, adRequest: GADRequest) {
         self.id = id
         self.adUnitId = adUnitId
         self.adRequest = adRequest
