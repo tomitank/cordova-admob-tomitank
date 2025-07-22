@@ -19,6 +19,7 @@ class AMBPlugin: CDVPlugin {
         super.pluginInitialize()
 
         AMBContext.plugin = self
+        //GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [ GADSimulatorID ]
 
         if let x = self.commandDelegate.settings["disableSDKCrashReporting".lowercased()] as? String,
            x == "true" {
