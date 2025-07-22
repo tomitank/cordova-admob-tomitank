@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<plugin id="cordova-admob-tomitank" version="1.0.7"
+<plugin id="cordova-admob-tomitank" version="1.0.8"
     xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <name>cordova-admob-tomitank</name>
@@ -103,19 +103,11 @@
 				</dict>
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
-					<string>4pfyvq9l8r.skadnetwork </string>
-				</dict>
-				<dict>
-					<key>SKAdNetworkIdentifier</key>
 					<string>2fnua5tdw4.skadnetwork</string>
 				</dict>
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
 					<string>ydx93a7ass.skadnetwork</string>
-				</dict>
-				<dict>
-					<key>SKAdNetworkIdentifier</key>
-					<string>5a6flpkh64.skadnetwork</string>
 				</dict>
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
@@ -135,6 +127,10 @@
 				</dict>
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
+					<string>3sh42y64q3.skadnetwork</string>
+				</dict>
+				<dict>
+					<key>SKAdNetworkIdentifier</key>
 					<string>c6k4g5qg8m.skadnetwork</string>
 				</dict>
 				<dict>
@@ -147,10 +143,6 @@
 				</dict>
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
-					<string>3sh42y64q3.skadnetwork</string>
-				</dict>
-				<dict>
-					<key>SKAdNetworkIdentifier</key>
 					<string>f38h382jlk.skadnetwork</string>
 				</dict>
 				<dict>
@@ -159,7 +151,7 @@
 				</dict>
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
-					<string>prcb7njmu6.skadnetwork</string>
+					<string>mlmmfzh3r3.skadnetwork</string>
 				</dict>
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
@@ -168,6 +160,10 @@
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
 					<string>wzmmz9fp6w.skadnetwork</string>
+				</dict>
+				<dict>
+					<key>SKAdNetworkIdentifier</key>
+					<string>su67r6k2v3.skadnetwork</string>
 				</dict>
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
@@ -183,15 +179,15 @@
 				</dict>
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
-					<string>9rd848q2bz.skadnetwork</string>
+					<string>gta9lk7p23.skadnetwork</string>
+				</dict>
+				<dict>
+					<key>SKAdNetworkIdentifier</key>
+					<string>vutu7akeur.skadnetwork</string>
 				</dict>
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
 					<string>y5ghdn5j9k.skadnetwork</string>
-				</dict>
-				<dict>
-					<key>SKAdNetworkIdentifier</key>
-					<string>n6fk4nfna4.skadnetwork</string>
 				</dict>
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
@@ -223,6 +219,14 @@
 				</dict>
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
+					<string>44jx6755aq.skadnetwork</string>
+				</dict>
+				<dict>
+					<key>SKAdNetworkIdentifier</key>
+					<string>k674qkevps.skadnetwork</string>
+				</dict>
+				<dict>
+					<key>SKAdNetworkIdentifier</key>
 					<string>4468km3ulz.skadnetwork</string>
 				</dict>
 				<dict>
@@ -235,10 +239,6 @@
 				</dict>
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
-					<string>av6w8kgt66.skadnetwork</string>
-				</dict>
-				<dict>
-					<key>SKAdNetworkIdentifier</key>
 					<string>klf5c3l5u5.skadnetwork</string>
 				</dict>
 				<dict>
@@ -247,19 +247,11 @@
 				</dict>
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
-					<string>424m5254lk.skadnetwork</string>
-				</dict>
-				<dict>
-					<key>SKAdNetworkIdentifier</key>
-					<string>ecpz2srf59.skadnetwork</string>
+					<string>kbmxgpxpgc.skadnetwork</string>
 				</dict>
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
 					<string>uw77j35x4d.skadnetwork</string>
-				</dict>
-				<dict>
-					<key>SKAdNetworkIdentifier</key>
-					<string>mlmmfzh3r3.skadnetwork</string>
 				</dict>
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
@@ -271,7 +263,11 @@
 				</dict>
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
-					<string>gta9lk7p23.skadnetwork</string>
+					<string>tl55sbb4fm.skadnetwork</string>
+				</dict>
+				<dict>
+					<key>SKAdNetworkIdentifier</key>
+					<string>c3frkrj4fj.skadnetwork</string>
 				</dict>
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
@@ -283,11 +279,11 @@
 				</dict>
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
-					<string>zq492l623r.skadnetwork</string>
+					<string>3rd42ekr43.skadnetwork</string>
 				</dict>
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
-					<string>3rd42ekr43.skadnetwork</string>
+					<string>97r2b46745.skadnetwork</string>
 				</dict>
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
