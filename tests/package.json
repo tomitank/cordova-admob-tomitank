@@ -1,9 +1,9 @@
 {
   "private": true,
-  "name": "cordova-plugin-admob-tests",
+  "name": "cordova-plugin-tomitank-tests",
   "version": "0.0.0",
   "cordova": {
-    "id": "cordova-plugin-admob-tests",
+    "id": "cordova-plugin-tomitank-tests",
     "platforms": []
   }
 }
