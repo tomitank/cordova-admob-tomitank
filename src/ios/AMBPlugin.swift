@@ -16,9 +16,6 @@ class AMBPlugin: CDVPlugin {
     }
 
     override func pluginInitialize() {
-
-        print("DEBUG - Initialize..")
-
         super.pluginInitialize()
 
         AMBContext.plugin = self
@@ -44,25 +41,7 @@ class AMBPlugin: CDVPlugin {
 
     @objc func configRequest(_ command: CDVInvokedUrlCommand) {
         let ctx = AMBContext(command)
-        let requestConfiguration = GADMobileAds.sharedInstance().requestConfiguration
-
-        if let maxAdContentRating = ctx.optMaxAdContentRating() {
-            requestConfiguration.maxAdContentRating = maxAdContentRating
-        }
-
-        if let tag = ctx.optChildDirectedTreatmentTag() {
-            requestConfiguration.tag(forChildDirectedTreatment: tag)
-        }
-
-        if let tag = ctx.optUnderAgeOfConsentTag() {
-            requestConfiguration.tagForUnderAge(ofConsent: tag)
-        }
-
-        if let testDevices = ctx.optTestDeviceIds() {
-            requestConfiguration.testDeviceIdentifiers = testDevices
-        }
-
-        ctx.resolve()
+        ctx.configure()
     }
 
     @objc func requestTrackingAuthorization(_ command: CDVInvokedUrlCommand) {
@@ -79,9 +58,8 @@ class AMBPlugin: CDVPlugin {
 
     @objc func start(_ command: CDVInvokedUrlCommand) {
         let ctx = AMBContext(command)
-
         GADMobileAds.sharedInstance().start(completionHandler: { _ in
-            ctx.resolve(["version": GADMobileAds.sharedInstance().sdkVersion])
+            ctx.resolve(["version": GADGetStringFromVersionNumber(GADMobileAds.sharedInstance().versionNumber)])
         })
     }
 
@@ -132,7 +110,7 @@ class AMBPlugin: CDVPlugin {
                 if ad != nil {
                     ctx.resolve()
                 } else {
-                    ctx.reject("fail to create ad: \(ctx.optId() ?? -1)")
+                    ctx.reject("fail to create ad: \(ctx.optId() ?? "-")")
                 }
             } else {
                 ctx.reject()
@@ -193,9 +171,21 @@ class AMBPlugin: CDVPlugin {
         }
     }
 
+    @objc func webviewGoto(_ command: CDVInvokedUrlCommand) {
+        let ctx = AMBContext(command)
+
+        DispatchQueue.main.async {
+            if let url = URL(string: ctx.optWebviewGoto()+"#from_webview_goto") {
+                let webView = self.webViewEngine.engineWebView as! WKWebView
+                webView.load(URLRequest(url: url))
+            }
+        }
+    }
+
     func emit(_ eventName: String, data: Any = NSNull()) {
         let result = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: ["type": eventName, "data": data])
         result?.setKeepCallbackAs(true)
         self.commandDelegate.send(result, callbackId: readyCallbackId)
     }
+
 }
