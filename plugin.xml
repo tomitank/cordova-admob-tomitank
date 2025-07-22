@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<plugin id="cordova-admob-tomitank" version="1.0.8"
+<plugin id="cordova-admob-tomitank" version="1.0.9"
     xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <name>cordova-admob-tomitank</name>
@@ -91,7 +91,11 @@
             <string>$USAGE</string>
         </config-file>
 
-		<config-file platform="ios" target="*-Info.plist" parent="SKAdNetworkItems">
+        <config-file target="*-Info.plist" parent="GADIntegrationManager">
+            <string>webview</string>
+        </config-file>
+
+		<config-file target="*-Info.plist" parent="SKAdNetworkItems">
 			<array>
 				<dict>
 					<key>SKAdNetworkIdentifier</key>
