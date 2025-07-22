@@ -16,7 +16,8 @@ class AMBPlugin: CDVPlugin {
     }
 
     override func pluginInitialize() {
-        print("Initialize..");
+
+        print("DEBUG - Initialize..")
 
         super.pluginInitialize()
 
