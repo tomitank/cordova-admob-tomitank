@@ -22,7 +22,7 @@ class AMBPlugin: CDVPlugin {
 
         if let x = self.commandDelegate.settings["disableSDKCrashReporting".lowercased()] as? String,
            x == "true" {
-            GADMobileAds.sharedInstance().disableSDKCrashReporting()
+            MobileAds.shared.disableSDKCrashReporting()
         }
     }
 
@@ -58,8 +58,8 @@ class AMBPlugin: CDVPlugin {
 
     @objc func start(_ command: CDVInvokedUrlCommand) {
         let ctx = AMBContext(command)
-        GADMobileAds.sharedInstance().start(completionHandler: { _ in
-            ctx.resolve(["version": GADGetStringFromVersionNumber(GADMobileAds.sharedInstance().versionNumber)])
+        MobileAds.shared.start(completionHandler: { _ in
+            ctx.resolve(["version": string(MobileAds.shared.versionNumber)])
         })
     }
 
@@ -67,7 +67,7 @@ class AMBPlugin: CDVPlugin {
         let ctx = AMBContext(command)
 
         if let muted = ctx.opt0() as? Bool {
-            GADMobileAds.sharedInstance().applicationMuted = muted
+            MobileAds.shared.isApplicationMuted = muted
             ctx.resolve()
         } else {
             ctx.reject()
@@ -78,7 +78,7 @@ class AMBPlugin: CDVPlugin {
         let ctx = AMBContext(command)
 
         if let volume = ctx.opt0() as? Float {
-            GADMobileAds.sharedInstance().applicationVolume = volume
+            MobileAds.shared.applicationVolume = volume
             ctx.resolve()
         } else {
             ctx.reject()

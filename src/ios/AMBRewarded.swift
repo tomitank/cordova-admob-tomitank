@@ -1,7 +1,7 @@
 import GoogleMobileAds
 
-class AMBRewarded: AMBAdBase, GADFullScreenContentDelegate {
-    var mAd: GADRewardedAd?
+class AMBRewarded: AMBAdBase, FullScreenContentDelegate {
+    var mAd: RewardedAd?
 
     deinit {
         clear()
@@ -14,7 +14,7 @@ class AMBRewarded: AMBAdBase, GADFullScreenContentDelegate {
     override func load(_ ctx: AMBContext) {
         clear()
 
-        GADRewardedAd.load(withAdUnitID: adUnitId, request: adRequest, completionHandler: { ad, error in
+        RewardedAd.load(with: adUnitId, request: adRequest, completionHandler: { ad, error in
             if error != nil {
                 self.emit(AMBEvents.adLoadFail, error!)
                 self.emit(AMBEvents.rewardedLoadFail, error!)
@@ -25,7 +25,7 @@ class AMBRewarded: AMBAdBase, GADFullScreenContentDelegate {
 
             self.mAd = ad
             ad?.fullScreenContentDelegate = self
-            ad?.serverSideVerificationOptions = ctx.optGADServerSideVerificationOptions()
+            ad?.serverSideVerificationOptions = ctx.optServerSideVerificationOptions()
 
             self.emit(AMBEvents.adLoad)
             self.emit(AMBEvents.rewardedLoad)
@@ -35,7 +35,7 @@ class AMBRewarded: AMBAdBase, GADFullScreenContentDelegate {
     }
 
     override func show(_ ctx: AMBContext) {
-        mAd?.present(fromRootViewController: plugin.viewController, userDidEarnRewardHandler: {
+        mAd?.present(from: plugin.viewController, userDidEarnRewardHandler: {
             let reward = self.mAd!.adReward
             self.emit(AMBEvents.adReward, reward)
             self.emit(AMBEvents.rewardedReward, reward)
@@ -43,23 +43,23 @@ class AMBRewarded: AMBAdBase, GADFullScreenContentDelegate {
         ctx.resolve()
     }
 
-    func adDidRecordImpression(_ ad: GADFullScreenPresentingAd) {
+    func adDidRecordImpression(_ ad: FullScreenPresentingAd) {
         self.emit(AMBEvents.adImpression)
         self.emit(AMBEvents.rewardedImpression)
     }
 
-    func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
+    func ad(_ ad: FullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
         clear()
         self.emit(AMBEvents.adShowFail, error)
         self.emit(AMBEvents.rewardedShowFail, error)
     }
 
-    func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+    func adWillPresentFullScreenContent(_ ad: FullScreenPresentingAd) {
         self.emit(AMBEvents.adShow)
         self.emit(AMBEvents.rewardedShow)
     }
 
-    func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+    func adDidDismissFullScreenContent(_ ad: FullScreenPresentingAd) {
         clear()
         self.emit(AMBEvents.adDismiss)
         self.emit(AMBEvents.rewardedDismiss)

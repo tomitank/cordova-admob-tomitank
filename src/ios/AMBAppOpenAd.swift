@@ -1,9 +1,9 @@
 import Foundation
 import GoogleMobileAds
 
-class AMBAppOpenAd: AMBAdBase, GADFullScreenContentDelegate {
+class AMBAppOpenAd: AMBAdBase, FullScreenContentDelegate {
 
-    var mAd: GADAppOpenAd?
+    var mAd: AppOpenAd?
 
     convenience init?(_ ctx: AMBContext) {
         guard let id = ctx.optId(),
@@ -13,7 +13,7 @@ class AMBAppOpenAd: AMBAdBase, GADFullScreenContentDelegate {
         }
         self.init(id: id,
                   adUnitId: adUnitId,
-                  adRequest: ctx.optGADRequest())
+                  adRequest: ctx.optRequest())
     }
 
     deinit {
@@ -27,7 +27,7 @@ class AMBAppOpenAd: AMBAdBase, GADFullScreenContentDelegate {
     override func load(_ ctx: AMBContext) {
         clear()
 
-        GADAppOpenAd.load(
+        AppOpenAd.load(
             withAdUnitID: self.adUnitId,
             request: adRequest,
             completionHandler: { (ad, error) in
@@ -45,23 +45,23 @@ class AMBAppOpenAd: AMBAdBase, GADFullScreenContentDelegate {
     }
 
     override func show(_ ctx: AMBContext) {
-        mAd?.present(fromRootViewController: AMBContext.plugin.viewController)
+        mAd?.present(from: AMBContext.plugin.viewController)
     }
 
-    func adDidRecordImpression(_ ad: GADFullScreenPresentingAd) {
+    func adDidRecordImpression(_ ad: FullScreenPresentingAd) {
         self.emit(AMBEvents.adImpression)
     }
 
-    func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
+    func ad(_ ad: FullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
         clear()
         self.emit(AMBEvents.adShowFail, error)
     }
 
-    func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+    func adWillPresentFullScreenContent(_ ad: FullScreenPresentingAd) {
         self.emit(AMBEvents.adShow)
     }
 
-    func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+    func adDidDismissFullScreenContent(_ ad: FullScreenPresentingAd) {
         clear()
         self.emit(AMBEvents.adDismiss)
     }

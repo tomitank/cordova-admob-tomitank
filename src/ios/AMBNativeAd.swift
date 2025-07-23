@@ -2,7 +2,7 @@ import Foundation
 import GoogleMobileAds
 
 protocol AMBNativeAdViewProvider: NSObjectProtocol {
-    func createView(_ nativeAd: GADNativeAd) -> UIView
+    func createView(_ nativeAd: NativeAd) -> UIView
     // delegate
     func didShow(_ ad: AMBNativeAd)
     func didHide(_ ad: AMBNativeAd)
@@ -13,24 +13,24 @@ extension AMBNativeAdViewProvider {
     func didHide(_ ad: AMBNativeAd) {}
 }
 
-class AMBNativeAd: AMBAdBase, GADNativeAdLoaderDelegate, GADNativeAdDelegate {
+class AMBNativeAd: AMBAdBase, NativeAdLoaderDelegate, NativeAdDelegate {
     static var providers = [String: AMBNativeAdViewProvider]()
 
-    var mLoader: GADAdLoader!
+    var mLoader: AdLoader!
     let viewProvider: AMBNativeAdViewProvider
-    var mAd: GADNativeAd?
+    var mAd: NativeAd?
     var ctxLoad: AMBContext?
 
     lazy var view: UIView = {
         return viewProvider.createView(mAd!)
     }()
 
-    init(id: String, adUnitId: String, adRequest: GADRequest, viewProvider: AMBNativeAdViewProvider) {
+    init(id: String, adUnitId: String, adRequest: Request, viewProvider: AMBNativeAdViewProvider) {
         self.viewProvider = viewProvider
 
         super.init(id: id, adUnitId: adUnitId, adRequest: adRequest)
 
-        mLoader = GADAdLoader(adUnitID: adUnitId, rootViewController: plugin.viewController,
+        mLoader = AdLoader(adUnitID: adUnitId, rootViewController: plugin.viewController,
                               adTypes: [.native], options: nil)
         mLoader.delegate = self
     }
@@ -45,7 +45,7 @@ class AMBNativeAd: AMBAdBase, GADNativeAdLoaderDelegate, GADNativeAdDelegate {
         }
         self.init(id: id,
                   adUnitId: adUnitId,
-                  adRequest: ctx.optGADRequest(),
+                  adRequest: ctx.optRequest(),
                   viewProvider: viewProvider)
     }
 
@@ -83,7 +83,7 @@ class AMBNativeAd: AMBAdBase, GADNativeAdLoaderDelegate, GADNativeAdDelegate {
         ctx.resolve()
     }
 
-    func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADNativeAd) {
+    func adLoader(_ adLoader: AdLoader, didReceive nativeAd: NativeAd) {
         mAd = nativeAd
         nativeAd.delegate = self
         self.emit(AMBEvents.adLoad)
@@ -93,7 +93,7 @@ class AMBNativeAd: AMBAdBase, GADNativeAdLoaderDelegate, GADNativeAdDelegate {
         }
     }
 
-    func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: Error) {
+    func adLoader(_ adLoader: AdLoader, didFailToReceiveAdWithError error: Error) {
         self.emit(AMBEvents.adLoadFail, error)
         if !adLoader.isLoading {
             ctxLoad?.reject(error)
@@ -101,27 +101,27 @@ class AMBNativeAd: AMBAdBase, GADNativeAdLoaderDelegate, GADNativeAdDelegate {
         }
     }
 
-    func nativeAdDidRecordImpression(_ nativeAd: GADNativeAd) {
+    func nativeAdDidRecordImpression(_ nativeAd: NativeAd) {
         self.emit(AMBEvents.adImpression, nativeAd)
     }
 
-    func nativeAdDidRecordClick(_ nativeAd: GADNativeAd) {
+    func nativeAdDidRecordClick(_ nativeAd: NativeAd) {
         self.emit(AMBEvents.adClick, nativeAd)
     }
 
-    func nativeAdWillPresentScreen(_ nativeAd: GADNativeAd) {
+    func nativeAdWillPresentScreen(_ nativeAd: NativeAd) {
         self.emit(AMBEvents.adShow, nativeAd)
     }
 
-    func nativeAdWillDismissScreen(_ nativeAd: GADNativeAd) {
+    func nativeAdWillDismissScreen(_ nativeAd: NativeAd) {
         // The native ad will dismiss a full screen view.
     }
 
-    func nativeAdDidDismissScreen(_ nativeAd: GADNativeAd) {
+    func nativeAdDidDismissScreen(_ nativeAd: NativeAd) {
         self.emit(AMBEvents.adDismiss, nativeAd)
     }
 
-    func nativeAdWillLeaveApplication(_ nativeAd: GADNativeAd) {
+    func nativeAdWillLeaveApplication(_ nativeAd: NativeAd) {
         // The native ad will cause the application to become inactive and
         // open a new application.
     }
