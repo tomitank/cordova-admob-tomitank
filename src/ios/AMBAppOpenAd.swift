@@ -28,7 +28,7 @@ class AMBAppOpenAd: AMBAdBase, FullScreenContentDelegate {
         clear()
 
         AppOpenAd.load(
-            withAdUnitID: self.adUnitId,
+            with: self.adUnitId,
             request: adRequest,
             completionHandler: { (ad, error) in
                 if error != nil {

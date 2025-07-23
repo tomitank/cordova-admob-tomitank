@@ -59,7 +59,7 @@ class AMBPlugin: CDVPlugin {
     @objc func start(_ command: CDVInvokedUrlCommand) {
         let ctx = AMBContext(command)
         MobileAds.shared.start(completionHandler: { _ in
-            ctx.resolve(["version": string(MobileAds.shared.versionNumber)])
+            ctx.resolve(["version": string(for: MobileAds.shared.versionNumber)])
         })
     }
 
