@@ -1,7 +1,7 @@
 # [Cordova AdMob tomitank]
 
 Based on AdMob Plus Cordova with updated SDK-s
-- Android: 23.6.0 (since 24.0.0 is bad for Android API level 21)
+- Android: 24.4.0
 - iOS: 12.7.0
 
 [![](https://img.shields.io/static/v1?label=Sponsor%20Me&style=for-the-badge&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/tomitank)
