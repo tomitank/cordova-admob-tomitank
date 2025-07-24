@@ -1,17 +1,9 @@
 import { MobileAd, MobileAdOptions } from './shared'
 
-enum AppOpenAdOrientation {
-  Portrait = 1,
-  PortraitUpsideDown = 2,
-  LandscapeRight = 3,
-  LandscapeLeft = 4,
-}
-
 export default class AppOpenAd extends MobileAd<
-  MobileAdOptions & { orientation: AppOpenAdOrientation }
+  MobileAdOptions
 > {
   static cls = 'AppOpenAd'
-  static readonly Orientation = AppOpenAdOrientation
 
   public isLoaded() {
     return super.isLoaded()

@@ -12,16 +12,12 @@ import admob.plus.core.Context;
 
 public class AppOpen extends AdBase {
     private final AdRequest mAdRequest;
-    private final int mOrientation;
     private AppOpenAd mAd = null;
 
     public AppOpen(ExecuteContext ctx) {
         super(ctx);
 
         mAdRequest = ctx.optAdRequest();
-
-        Integer o = ctx.optInt("orientation");
-        mOrientation = o == null || o == 1 || o == 2 ? AppOpenAd.APP_OPEN_AD_ORIENTATION_PORTRAIT : AppOpenAd.APP_OPEN_AD_ORIENTATION_LANDSCAPE;
     }
 
     @Override
@@ -38,7 +34,7 @@ public class AppOpen extends AdBase {
         AppOpenAd.load(getActivity(),
                 adUnitId,
                 mAdRequest,
-                mOrientation, new AppOpenAd.AppOpenAdLoadCallback() {
+                new AppOpenAd.AppOpenAdLoadCallback() {
                     @Override
                     public void onAdLoaded(AppOpenAd ad) {
                         mAd = ad;
