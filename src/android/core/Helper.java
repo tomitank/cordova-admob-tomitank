@@ -26,14 +26,14 @@ import java.util.List;
 import java.util.Map;
 
 public class Helper {
-    public static final SparseArray<Ad> ads = new SparseArray<Ad>();
+    public static final Map<String, Ad> ads = new HashMap<>();
     private final Adapter adapter;
 
     public Helper(Adapter adapter) {
         this.adapter = adapter;
     }
 
-    public static Ad getAd(Integer id) {
+    public static Ad getAd(String id) {
         return ads.get(id);
     }
 

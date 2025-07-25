@@ -26,7 +26,7 @@ export async function start() {
 export class MobileAd<T extends MobileAdOptions = MobileAdOptions> {
   public static readonly type: string = ''
 
-  private static allAds: { [s: number]: MobileAd } = {}
+  private static allAds: { [s: string]: MobileAd } = {}
   private static idCounter = 0
 
   public readonly id: string

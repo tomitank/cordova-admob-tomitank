@@ -27,6 +27,7 @@ import admob.plus.cordova.ads.Rewarded;
 import admob.plus.cordova.ads.RewardedInterstitial;
 import admob.plus.core.GenericAd;
 import admob.plus.core.Helper;
+import admob.plus.core.Ad;
 
 import static admob.plus.core.Helper.ads;
 
@@ -195,16 +196,16 @@ public class AdMob extends CordovaPlugin implements Helper.Adapter {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        for (int i = 0; i < ads.size(); i++) {
-            AdBase ad = (AdBase) ads.valueAt(i);
+        for (Map.Entry<String, Ad> entry : ads.entrySet()) {
+            AdBase ad = (AdBase) entry.getValue();
             ad.onConfigurationChanged(newConfig);
         }
     }
 
     @Override
     public void onPause(boolean multitasking) {
-        for (int i = 0; i < ads.size(); i++) {
-            AdBase ad = (AdBase) ads.valueAt(i);
+        for (Map.Entry<String, Ad> entry : ads.entrySet()) {
+            AdBase ad = (AdBase) entry.getValue();
             ad.onPause(multitasking);
         }
         super.onPause(multitasking);
@@ -213,8 +214,8 @@ public class AdMob extends CordovaPlugin implements Helper.Adapter {
     @Override
     public void onResume(boolean multitasking) {
         super.onResume(multitasking);
-        for (int i = 0; i < ads.size(); i++) {
-            AdBase ad = (AdBase) ads.valueAt(i);
+        for (Map.Entry<String, Ad> entry : ads.entrySet()) {
+            AdBase ad = (AdBase) entry.getValue();
             ad.onResume(multitasking);
         }
     }
@@ -223,8 +224,8 @@ public class AdMob extends CordovaPlugin implements Helper.Adapter {
     public void onDestroy() {
         readyCallbackContext = null;
 
-        for (int i = 0; i < ads.size(); i++) {
-            AdBase ad = (AdBase) ads.valueAt(i);
+        for (Map.Entry<String, Ad> entry : ads.entrySet()) {
+            AdBase ad = (AdBase) entry.getValue();
             ad.onDestroy();
         }
 
