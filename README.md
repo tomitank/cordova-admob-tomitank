@@ -1,8 +1,8 @@
 # [Cordova AdMob tomitank]
 
 Based on AdMob Plus Cordova with updated SDK-s
-- Android: 24.4.0
-- iOS: 12.7.0
+- Android: 24.5.0
+- iOS: 12.9.0
 
 [![](https://img.shields.io/static/v1?label=Sponsor%20Me&style=for-the-badge&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/tomitank)
 
