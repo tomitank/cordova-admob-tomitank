@@ -20,7 +20,6 @@ class AMBInterstitial: AMBAdBase, FullScreenContentDelegate {
             completionHandler: { ad, error in
                 if error != nil {
                     self.emit(AMBEvents.adLoadFail, error!)
-                    self.emit(AMBEvents.interstitialLoadFail, error!)
                     ctx.reject(error!)
                     return
                 }
@@ -29,7 +28,6 @@ class AMBInterstitial: AMBAdBase, FullScreenContentDelegate {
                 ad?.fullScreenContentDelegate = self
 
                 self.emit(AMBEvents.adLoad)
-                self.emit(AMBEvents.interstitialLoad)
 
                 ctx.resolve()
          })
@@ -42,24 +40,20 @@ class AMBInterstitial: AMBAdBase, FullScreenContentDelegate {
 
     func adDidRecordImpression(_ ad: FullScreenPresentingAd) {
         self.emit(AMBEvents.adImpression)
-        self.emit(AMBEvents.interstitialImpression)
     }
 
     func ad(_ ad: FullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
         clear()
         self.emit(AMBEvents.adShowFail, error)
-        self.emit(AMBEvents.interstitialShowFail, error)
     }
 
     func adWillPresentFullScreenContent(_ ad: FullScreenPresentingAd) {
         self.emit(AMBEvents.adShow)
-        self.emit(AMBEvents.interstitialShow)
     }
 
     func adDidDismissFullScreenContent(_ ad: FullScreenPresentingAd) {
         clear()
         self.emit(AMBEvents.adDismiss)
-        self.emit(AMBEvents.interstitialDismiss)
     }
 
     private func clear() {

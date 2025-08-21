@@ -187,11 +187,7 @@ extension AMBCoreContext {
         if let testDevices = optTestDeviceIds() {
             requestConfiguration.testDeviceIdentifiers = testDevices
         }
-        if let sameAppKey = optBool("sameAppKey") {
-            requestConfiguration.setPublisherFirstPartyIDEnabled(sameAppKey)
-        }
-        if let
-        publisherFirstPartyIDEnabled = optBool("publisherFirstPartyIDEnabled") {
+        if let publisherFirstPartyIDEnabled = optBool("publisherFirstPartyIDEnabled") {
             requestConfiguration.setPublisherFirstPartyIDEnabled(publisherFirstPartyIDEnabled)
         }
 

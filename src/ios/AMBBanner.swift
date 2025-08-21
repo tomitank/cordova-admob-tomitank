@@ -226,7 +226,6 @@ class AMBBanner: AMBAdBase, BannerViewDelegate, AdSizeDelegate {
                 "heightInPixels": round(bannerView.frame.size.height * UIScreen.main.scale)
             ]
         ])
-        self.emit(AMBEvents.bannerLoad)
         self.emit(AMBEvents.bannerSize, [
             "size": [
                 "width": bannerView.frame.size.width,
@@ -240,12 +239,10 @@ class AMBBanner: AMBAdBase, BannerViewDelegate, AdSizeDelegate {
     func bannerView(_ bannerView: BannerView,
                     didFailToReceiveAdWithError error: Error) {
         self.emit(AMBEvents.adLoadFail, error)
-        self.emit(AMBEvents.bannerLoadFail, error)
     }
 
     func bannerViewDidRecordImpression(_ bannerView: BannerView) {
         self.emit(AMBEvents.adImpression)
-        self.emit(AMBEvents.bannerImpression)
     }
 
     func bannerViewDidRecordClick(_ bannerView: BannerView) {
@@ -254,7 +251,6 @@ class AMBBanner: AMBAdBase, BannerViewDelegate, AdSizeDelegate {
 
     func bannerViewWillPresentScreen(_ bannerView: BannerView) {
         self.emit(AMBEvents.adShow)
-        self.emit(AMBEvents.bannerOpen)
     }
 
     func bannerViewWillDismissScreen(_ bannerView: BannerView) {
@@ -262,7 +258,6 @@ class AMBBanner: AMBAdBase, BannerViewDelegate, AdSizeDelegate {
 
     func bannerViewDidDismissScreen(_ bannerView: BannerView) {
         self.emit(AMBEvents.adDismiss)
-        self.emit(AMBEvents.bannerClose)
     }
 
     func adView(_ bannerView: BannerView, willChangeAdSizeTo size: AdSize) {
