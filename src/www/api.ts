@@ -71,9 +71,7 @@ export class MobileAd<T extends MobileAdOptions = MobileAdOptions> {
 
   protected async isLoaded() {
     await this.init();
-    return execAsync(NativeActions.adIsLoaded, [
-      { id: this.id },
-    ]) as Promise<boolean>;
+    return execAsync(NativeActions.adIsLoaded, [{ id: this.id }]) as Promise<boolean>;
   }
 
   protected async load() {

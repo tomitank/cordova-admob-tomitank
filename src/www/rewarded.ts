@@ -1,4 +1,4 @@
-import { MobileAd, MobileAdOptions } from './shared'
+import { MobileAd, MobileAdOptions } from './shared';
 
 export interface ServerSideVerificationOptions {
   customData?: string
@@ -10,17 +10,17 @@ export interface RewardedAdOptions extends MobileAdOptions {
 }
 
 export default class RewardedAd extends MobileAd<RewardedAdOptions> {
-  static cls = 'RewardedAd'
+  static cls = 'RewardedAd';
 
   public isLoaded() {
-    return super.isLoaded()
+    return super.isLoaded();
   }
 
   public load() {
-    return super.load()
+    return super.load();
   }
 
   public show() {
-    return super.show()
+    return super.show();
   }
 }

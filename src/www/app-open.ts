@@ -1,19 +1,17 @@
-import { MobileAd, MobileAdOptions } from './shared'
+import { MobileAd, MobileAdOptions } from './shared';
 
-export default class AppOpenAd extends MobileAd<
-  MobileAdOptions
-> {
-  static cls = 'AppOpenAd'
+export default class AppOpenAd extends MobileAd<MobileAdOptions> {
+  static cls = 'AppOpenAd';
 
   public isLoaded() {
-    return super.isLoaded()
+    return super.isLoaded();
   }
 
   public load() {
-    return super.load()
+    return super.load();
   }
 
   async show() {
-    return super.show() as Promise<boolean>
+    return super.show() as Promise<boolean>;
   }
 }

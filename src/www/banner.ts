@@ -5,15 +5,15 @@ import {
   MobileAdOptions,
   NativeActions,
   Platforms,
-} from './shared'
+} from './shared';
 
-type Position = 'top' | 'bottom'
+type Position = 'top' | 'bottom';
 
 const colorToRGBA = (function () {
-  const canvas = document.createElement('canvas')
-  canvas.width = canvas.height = 1
-  const ctx = canvas.getContext('2d')
-  if (!ctx) return () => undefined
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = 1;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return () => undefined;
 
   return function (
     col: string,
@@ -34,7 +34,7 @@ const colorToRGBA = (function () {
     const { data } = ctx.getImageData(0, 0, 1, 1)
     return { r: data[0], g: data[1], b: data[2], a: data[3] }
   }
-})()
+})();
 
 type BannerSize =
   | AdSizeType
@@ -48,7 +48,7 @@ type BannerSize =
       adaptive: 'inline'
       maxHeight: number
       width?: number
-    }
+    };
 
 export interface BannerAdOptions extends MobileAdOptions {
   position?: Position
@@ -57,16 +57,16 @@ export interface BannerAdOptions extends MobileAdOptions {
 }
 
 export default class BannerAd extends MobileAd<BannerAdOptions> {
-  static cls = 'BannerAd'
+  static cls = 'BannerAd';
 
-  private _loaded = false
+  private _loaded = false;
 
   constructor(opts: BannerAdOptions) {
     super({
       position: 'bottom',
       size: AdSizeType.SMART_BANNER,
       ...opts,
-    })
+    });
   }
 
   public static config(opts: {
@@ -80,23 +80,26 @@ export default class BannerAd extends MobileAd<BannerAdOptions> {
         { ...opts, backgroundColor: bgColor ? colorToRGBA(bgColor) : bgColor },
       ])
     }
-    return false
+    return false;
+  }
+
+  public async isLoaded() {
+    return super.isLoaded();
   }
 
   public async load() {
-    await super.load()
-    this._loaded = true
+    await super.load();
+    this._loaded = true;
   }
 
   public async show() {
     if (!this._loaded) {
-      await this.load()
+      await this.load();
     }
-
-    return super.show()
+    return super.show();
   }
 
   public async hide() {
-    return super.hide()
+    return super.hide();
   }
 }
