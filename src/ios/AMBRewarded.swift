@@ -22,7 +22,7 @@ class AMBRewarded: AMBAdBase, FullScreenContentDelegate {
             }
 
             self.mAd = ad
-            ad?.fullScreenContentDelegate = selfx
+            ad?.fullScreenContentDelegate = self
             ad?.serverSideVerificationOptions = ctx.optServerSideVerificationOptions()
 
             self.emit(AMBEvents.adLoad)
