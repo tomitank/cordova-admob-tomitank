@@ -59,7 +59,7 @@ export interface BannerAdOptions extends MobileAdOptions {
 export default class BannerAd extends MobileAd<BannerAdOptions> {
   static cls = 'BannerAd';
 
-  private _loaded = false;
+  public isHidden = true;
 
   constructor(opts: BannerAdOptions) {
     super({
@@ -89,17 +89,20 @@ export default class BannerAd extends MobileAd<BannerAdOptions> {
 
   public async load() {
     await super.load();
-    this._loaded = true;
   }
 
   public async show() {
-    if (!this._loaded) {
-      await this.load();
+    if (this.isHidden) {
+      this.isHidden = false;
+      if (!await this.isLoaded()) {
+        await this.load();
+      }
+      return super.show();
     }
-    return super.show();
   }
 
   public async hide() {
+    this.isHidden = true;
     return super.hide();
   }
 }
