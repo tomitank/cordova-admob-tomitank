@@ -1,25 +1,12 @@
+import { exec } from 'cordova';
 import AppOpenAd from './app-open';
+import channel from 'cordova/channel';
 import InterstitialAd from './interstitial';
 import BannerAd, { BannerAdOptions } from './banner';
 import NativeAd, { NativeAdOptions } from './native';
-import RewardedAd, {
-  RewardedAdOptions,
-  ServerSideVerificationOptions,
-} from './rewarded';
-import RewardedInterstitialAd, {
-  RewardedInterstitialAdOptions,
-} from './rewarded-interstitial';
-import {
-  AdMobConfig,
-  Events,
-  execAsync,
-  NativeActions,
-  Platforms,
-  RequestConfig,
-  start,
-  AdSizeType,
-  TrackingAuthorizationStatus,
-} from './shared';
+import RewardedAd, { RewardedAdOptions, ServerSideVerificationOptions } from './rewarded';
+import RewardedInterstitialAd, { RewardedInterstitialAdOptions } from './rewarded-interstitial';
+import { AdMobConfig, Events, execAsync, NativeActions, Platforms, RequestConfig, start, AdSizeType, TrackingAuthorizationStatus, MobileAd, cleanup } from './shared';
 
 export * from './api';
 export {
@@ -36,6 +23,19 @@ export {
   ServerSideVerificationOptions,
 };
 
+function onMessageFromNative(event: any) {
+  const { data } = event;
+  if (data && data.adId) {
+    data.ad = MobileAd.getAdById(data.adId);
+  }
+  cordova.fireDocumentEvent(event.type, data);
+}
+
+function cordovaEventListener() {
+  exec(onMessageFromNative, console.error, 'AdMob', NativeActions.ready, []);
+  channel.initializationComplete(feature);
+}
+
 export class AdMob {
   public readonly AppOpenAd = AppOpenAd;
   public readonly BannerAd = BannerAd;
@@ -46,6 +46,21 @@ export class AdMob {
   public readonly AdSizeType = AdSizeType;
   public readonly Events = Events;
   public readonly TrackingAuthorizationStatus = TrackingAuthorizationStatus;
+
+  constructor() {
+
+
+    const feature = 'onAdMobPlusReady';
+    channel.createSticky(feature);
+    channel.waitForInitialization(feature);
+
+    channel.onCordovaReady.subscribe();
+  }
+
+  public cleanup() {
+    cleanup();
+    channel.onCordovaReady.unsubscribe()
+  }
 
   public configure(config: AdMobConfig) {
     return execAsync(NativeActions.configure, [config]);

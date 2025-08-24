@@ -3,6 +3,10 @@ import { execAsync, Events, NativeActions } from './generated';
 export { execAsync, AdSizeType, Events, NativeActions } from './generated';
 
 /** @internal */
+let started = false;
+let startPromise: Promise<{ version: string }> | null = null;
+
+/** @internal */
 export type MobileAdOptions = {
   id?: string
   adUnitId: string
@@ -11,8 +15,6 @@ export type MobileAdOptions = {
   npa?: '1'
 };
 
-let started = false;
-let startPromise: Promise<{ version: string }> | null = null;
 type AdEventNames = Exclude<keyof typeof Events, 'ready'> extends infer K
   ? K extends keyof typeof Events
     ? typeof Events[K] extends `admob.${string}.${infer EventName}`
@@ -30,6 +32,11 @@ export async function start() {
   const result = await startPromise;
   started = true;
   return result;
+}
+
+/** @internal */
+export function cleanup() {
+  started = false;
 }
 
 /** @internal */
