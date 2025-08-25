@@ -2,11 +2,6 @@ import BannerAd from './banner';
 import { execAsync, Events, NativeActions } from './generated';
 export { execAsync, AdSizeType, Events, NativeActions } from './generated';
 
-/** @internal */
-let started = false;
-let startPromise: Promise<{ version: string }> | null = null;
-
-/** @internal */
 export type MobileAdOptions = {
   id?: string
   adUnitId: string
@@ -27,26 +22,15 @@ type AdEventNames = Exclude<keyof typeof Events, 'ready'> extends infer K
 type AdEventNamesByType<T extends MobileAd<any>> = T extends BannerAd ? Omit<AdEventNames, 'size'|'sizechange'> : AdEventNames;
 
 /** @internal */
-export async function start() {
-  startPromise = execAsync(NativeActions.start) as Promise<{ version: string }>;
-  const result = await startPromise;
-  started = true;
-  return result;
-}
-
-/** @internal */
-export function cleanup() {
-  started = false;
-}
-
-/** @internal */
 export class MobileAd<T extends MobileAdOptions = MobileAdOptions> {
-  public static readonly type: string = '';
+  private static startPromise: Promise<{ version: string }> | null = null;
   private static allAds: { [s: string]: MobileAd } = {};
+  private static started: boolean = false;
+  private eventRemovers: Array<Function> = [];
+  private _init: Promise<any> | null = null;
   public readonly id: string;
   protected readonly opts: T;
   private _created = false;
-  private _init: Promise<any> | null = null;
 
   constructor(opts: T) {
     this.opts = opts;
@@ -62,6 +46,23 @@ export class MobileAd<T extends MobileAdOptions = MobileAdOptions> {
     return this.opts.adUnitId;
   }
 
+  public static async start() {
+    if (!this.startPromise) {
+      this.startPromise = execAsync(NativeActions.start) as Promise<{ version: string }>;
+      const result = await this.startPromise;
+      this.started = true;
+      return result;
+    }
+    return this.startPromise;
+  }
+
+  public static cleanup() {
+    Object.values(this.allAds).forEach(ad => ad.eventRemovers.forEach(remover => remover()));
+    this.allAds = {};
+    this.started = false;
+    this.startPromise = null;
+  }
+
   public on<EventNames extends AdEventNamesByType<this>>(eventName: EventNames, callback: (ev: Event) => any, useCapture?: boolean): () => void {
     const type = `admob.ad.${eventName.toLowerCase()}`;
     const listener = (evt: Event & { ad?: MobileAd }) => {
@@ -71,9 +72,14 @@ export class MobileAd<T extends MobileAdOptions = MobileAdOptions> {
     };
     document.addEventListener(type, listener, useCapture);
 
-    return () => {
+    const removeFn = () => {
       document.removeEventListener(type, listener, useCapture);
+      const index = this.eventRemovers.indexOf(removeFn);
+      if (index !== -1) this.eventRemovers.splice(index, 1);
     };
+
+    this.eventRemovers.push(removeFn);
+    return removeFn;
   }
 
   protected async isLoaded() {
@@ -82,13 +88,13 @@ export class MobileAd<T extends MobileAdOptions = MobileAdOptions> {
   }
 
   protected async load() {
-    await this.init()
+    await this.init();
     // TODO read `opts` in native code?
     await execAsync(NativeActions.adLoad, [{ ...this.opts, id: this.id }]);
   }
 
   protected async show(opts?: Record<string, any>) {
-    await this.init()
+    await this.init();
     return execAsync(NativeActions.adShow, [{ ...opts, id: this.id }]);
   }
 
@@ -99,9 +105,8 @@ export class MobileAd<T extends MobileAdOptions = MobileAdOptions> {
   protected async init() {
     if (this._created) return;
 
-    if (!started) {
-      if (startPromise === null) start();
-      await startPromise;
+    if (!MobileAd.started) {
+      await MobileAd.start();
     }
 
     if (this._init === null) {

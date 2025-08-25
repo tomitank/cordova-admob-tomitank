@@ -6,7 +6,7 @@ import BannerAd, { BannerAdOptions } from './banner';
 import NativeAd, { NativeAdOptions } from './native';
 import RewardedAd, { RewardedAdOptions, ServerSideVerificationOptions } from './rewarded';
 import RewardedInterstitialAd, { RewardedInterstitialAdOptions } from './rewarded-interstitial';
-import { AdMobConfig, Events, execAsync, NativeActions, Platforms, RequestConfig, start, AdSizeType, TrackingAuthorizationStatus, MobileAd, cleanup } from './shared';
+import { AdMobConfig, Events, execAsync, NativeActions, Platforms, RequestConfig, AdSizeType, TrackingAuthorizationStatus, MobileAd } from './shared';
 
 export * from './api';
 export {
@@ -32,6 +32,9 @@ function onMessageFromNative(event: any) {
 }
 
 function cordovaEventListener() {
+  const feature = 'onAdMobPlusReady';
+  channel.createSticky(feature);
+  channel.waitForInitialization(feature);
   exec(onMessageFromNative, console.error, 'AdMob', NativeActions.ready, []);
   channel.initializationComplete(feature);
 }
@@ -48,18 +51,17 @@ export class AdMob {
   public readonly TrackingAuthorizationStatus = TrackingAuthorizationStatus;
 
   constructor() {
-
-
-    const feature = 'onAdMobPlusReady';
-    channel.createSticky(feature);
-    channel.waitForInitialization(feature);
-
-    channel.onCordovaReady.subscribe();
+    channel.onCordovaReady.subscribe(cordovaEventListener);
   }
 
-  public cleanup() {
-    cleanup();
-    channel.onCordovaReady.unsubscribe()
+  public reinit() {
+    this.cleanup();
+    channel.onCordovaReady.subscribe(cordovaEventListener);
+  }
+
+  private cleanup() {
+    MobileAd.cleanup();
+    channel.onCordovaReady.unsubscribe(cordovaEventListener);
   }
 
   public configure(config: AdMobConfig) {
@@ -79,7 +81,7 @@ export class AdMob {
   }
 
   public start() {
-    return start();
+    return MobileAd.start();
   }
 
   public async requestTrackingAuthorization(): Promise<
