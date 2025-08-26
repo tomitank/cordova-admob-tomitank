@@ -54,8 +54,15 @@ export class AdMob {
     channel.onCordovaReady.subscribe(cordovaEventListener);
   }
 
-  public reinit() {
+  public reinit(callback?: Function) {
     this.cleanup();
+    if (typeof callback === 'function') {
+      const readyCallback = () => {
+        document.removeEventListener(Events.ready, readyCallback);
+        callback();
+      };
+      document.addEventListener(Events.ready, readyCallback);
+    }
     channel.onCordovaReady.subscribe(cordovaEventListener);
   }
 
