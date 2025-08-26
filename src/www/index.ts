@@ -54,16 +54,31 @@ export class AdMob {
     channel.onCordovaReady.subscribe(cordovaEventListener);
   }
 
-  public reinit(callback?: Function) {
-    this.cleanup();
-    if (typeof callback === 'function') {
-      const readyCallback = () => {
-        document.removeEventListener(Events.ready, readyCallback);
-        callback();
-      };
-      document.addEventListener(Events.ready, readyCallback);
+  /**
+   * Return false, when not needed, return true when yes
+   * @description error: bridge connection lost..
+   * @param callback
+   */
+  public async reinitWhenNeeded(callback?: Function) {
+    try {
+      await execAsync(NativeActions.ready, []);
+      return false;
+    } catch (error) { // reinit only when has error..
+      return this.reinit(callback);
     }
-    channel.onCordovaReady.subscribe(cordovaEventListener);
+  }
+
+  private reinit(callback?: Function) {
+      this.cleanup();
+      if (typeof callback === 'function') {
+        const readyCallback = () => {
+          document.removeEventListener(Events.ready, readyCallback);
+          callback();
+        };
+        document.addEventListener(Events.ready, readyCallback);
+      }
+      channel.onCordovaReady.subscribe(cordovaEventListener);
+      return true;
   }
 
   private cleanup() {

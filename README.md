@@ -15,6 +15,17 @@ const banner = new BannerAd(...);
 banner.on('size', (res) => ...);
 ```
 
+## Extras
+- Added "admob.reinitWhenNeeded(callback)" function to restart when cordova - admob bridge connection lost
+- Example:
+```
+	const initFn = () => {
+		const banner = new BannerAd(...);
+		banner.on('size', (res) => ...);
+	};
+	document.addEventListener('resume', () => admob.reinitWhenNeeded(), false);
+```
+
 ## Documentation
 
 You can find the documentation [on the website](https://admob-plus.github.io/docs/cordova).
