@@ -74,15 +74,17 @@ export class AdMob {
           resolve();
         };
 
+        // wait fo ready event..
+        document.addEventListener(Events.ready, onReady);
+
+        // trigger ready event..
+        exec(()=>{}, ()=>{}, 'AdMob', NativeActions.ready, []);
+
+        // timeout when ready not fired..
         const timeoutId = setTimeout(() => { // Max 2 sec..
           document.removeEventListener(Events.ready, onReady);
           reject();
         }, 2000);
-
-        // wait fo ready event..
-        document.addEventListener(Events.ready, onReady);
-        // trigger ready event..
-        exec(()=>{}, ()=>{}, 'AdMob', NativeActions.ready, []);
       });
       return false;
     } catch (error) { // reinit only when has error..
@@ -104,14 +106,17 @@ export class AdMob {
         }
       };
 
+      // wait fo ready event..
+      document.addEventListener(Events.ready, onReady);
+
+      // trigger ready event with subscribe..
+      channel.onCordovaReady.subscribe(cordovaEventListener);
+
+      // timeout when ready not fired..
       const timeoutId = setTimeout(() => { // Max 2 sec..
         document.removeEventListener(Events.ready, onReady);
         resolve('fail');
       }, 2000);
-
-      // wait fo ready event..
-      document.addEventListener(Events.ready, onReady);
-      channel.onCordovaReady.subscribe(cordovaEventListener);
     });
   }
 

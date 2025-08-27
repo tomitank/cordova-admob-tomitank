@@ -1,6 +1,6 @@
 {
   "name": "cordova-admob-tomitank",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "Trustable Google AdMob Cordova Plugin",
   "main": "lib/index.js",
   "module": "esm/index.js",
