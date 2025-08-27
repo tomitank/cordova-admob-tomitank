@@ -23,7 +23,7 @@ banner.on('size', (res) => ...);
 		const banner = new BannerAd(...);
 		banner.on('size', (res) => ...);
 	};
-	document.addEventListener('resume', () => admob.reinitWhenNeeded(), false);
+	document.addEventListener('resume', () => admob.reinitWhenNeeded(initFn), false);
 ```
 
 ## Documentation

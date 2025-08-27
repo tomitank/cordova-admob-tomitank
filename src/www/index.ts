@@ -55,24 +55,25 @@ export class AdMob {
   }
 
   /**
-   * Return false, when not needed, return true when yes
-   * @description error: bridge connection lost..
-   * @param callback
+   * @return true: successfully reinited
+   * @return false: reinit not needed bridge still connected
+   * @return 'fail': ready event not fired after reinit
+   * @param callback? Function
    */
   public async reinitWhenNeeded(callback?: Function) {
     try {
-        const readyPromise = execAsync(NativeActions.ready, []);
-        const timeoutPromise = new Promise((resolve, reject) => {
-            setTimeout(()=>reject('error'), 2000); // Max 2 sec..
-        });
-        await Promise.race([timeoutPromise, readyPromise]);
+      const readyPromise = execAsync(NativeActions.ready, []);
+      const timeoutPromise = new Promise((resolve, reject) => {
+          setTimeout(()=>reject('timeout'), 2000); // Max 2 sec..
+      });
+      await Promise.race([timeoutPromise, readyPromise]);
       return false;
     } catch (error) { // reinit only when has error..
       return this.reinit(callback);
     }
   }
 
-  private reinit(callback?: Function): Promise<boolean> {
+  private reinit(callback?: Function): Promise<true|'fail'> {
     this.cleanup();
     return new Promise((resolve) => {
       const onReady = () => {
@@ -86,7 +87,7 @@ export class AdMob {
 
       const timeoutId = setTimeout(() => { // Max 2 sec..
         document.removeEventListener(Events.ready, onReady);
-        resolve(false);
+        resolve('fail');
       }, 2000);
 
       // wait fo ready event..

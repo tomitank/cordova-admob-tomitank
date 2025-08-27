@@ -41,7 +41,7 @@ export enum AdSizeType {
 export const execAsync = (action: NativeActions, args?: any[]) => {
   return new Promise((resolve, reject) => {
     cordova.exec(resolve, reject, 'AdMob', action, args)
-  })
+  });
 }
 
 export function waitEvent(
@@ -67,7 +67,7 @@ export function waitEvent(
       )
     }
   })
-}
+};
 
 export const initPlugin = () => {
   document.addEventListener(
@@ -84,4 +84,4 @@ export const initPlugin = () => {
     },
     false,
   )
-}
+};
