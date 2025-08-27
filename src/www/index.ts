@@ -40,6 +40,12 @@ function cordovaEventListener() {
 }
 
 export class AdMob {
+  /**
+   * this uset true only in reinit when user don't has callback
+   * In normal use this need to set to true when ready event fired.
+   * But in my application i set true only when i have internet connection.
+   */
+  public ready: boolean = false;
   public readonly AppOpenAd = AppOpenAd;
   public readonly BannerAd = BannerAd;
   public readonly InterstitialAd = InterstitialAd;
@@ -49,7 +55,6 @@ export class AdMob {
   public readonly AdSizeType = AdSizeType;
   public readonly Events = Events;
   public readonly TrackingAuthorizationStatus = TrackingAuthorizationStatus;
-
   constructor() {
     channel.onCordovaReady.subscribe(cordovaEventListener);
   }
@@ -82,6 +87,8 @@ export class AdMob {
         resolve(true);
         if (typeof callback === 'function') {
           callback();
+        } else {
+          this.ready = true;
         }
       };
 
@@ -97,6 +104,7 @@ export class AdMob {
   }
 
   private cleanup() {
+    this.ready = false;
     MobileAd.cleanup();
     channel.onCordovaReady.unsubscribe(cordovaEventListener);
   }
