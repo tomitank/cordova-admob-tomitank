@@ -60,18 +60,30 @@ export class AdMob {
   }
 
   /**
-   * @return true: successfully reinited
+   * @return true: successfully reinited the cordova bridge
    * @return false: reinit not needed bridge still connected
    * @return 'fail': ready event not fired after reinit
    * @param callback? Function
    */
   public async reinitWhenNeeded(callback?: Function) {
     try {
-      const readyPromise = execAsync(NativeActions.ready, []);
-      const timeoutPromise = new Promise((resolve, reject) => {
-          setTimeout(()=>reject('timeout'), 2000); // Max 2 sec..
+      await new Promise<void>((resolve, reject) => {
+        const onReady = () => {
+          clearTimeout(timeoutId);
+          document.removeEventListener(Events.ready, onReady);
+          resolve();
+        };
+
+        const timeoutId = setTimeout(() => { // Max 2 sec..
+          document.removeEventListener(Events.ready, onReady);
+          reject();
+        }, 2000);
+
+        // wait fo ready event..
+        document.addEventListener(Events.ready, onReady);
+        // trigger ready event..
+        exec(()=>{}, ()=>{}, 'AdMob', NativeActions.ready, []);
       });
-      await Promise.race([timeoutPromise, readyPromise]);
       return false;
     } catch (error) { // reinit only when has error..
       return this.reinit(callback);

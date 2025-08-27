@@ -40,7 +40,7 @@ export enum AdSizeType {
 
 export const execAsync = (action: NativeActions, args?: any[]) => {
   return new Promise((resolve, reject) => {
-    cordova.exec(resolve, reject, 'AdMob', action, args)
+    cordova.exec(resolve, reject, 'AdMob', action, args);
   });
 }
 
