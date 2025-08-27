@@ -31,7 +31,6 @@ import admob.plus.core.Ad;
 
 import static admob.plus.core.Helper.ads;
 
-
 public class AdMob extends CordovaPlugin implements Helper.Adapter {
     public static final String NATIVE_VIEW_DEFAULT = Native.VIEW_DEFAULT_KEY;
     private static final String TAG = "AdMobPlus";
@@ -74,29 +73,34 @@ public class AdMob extends CordovaPlugin implements Helper.Adapter {
                 break;
             case Actions.AD_CREATE:
                 String adClass = ctx.optString("cls");
-                if (adClass == null) {
+                if (adClass == null) { // class missing..
                     ctx.reject("ad cls is missing");
                 } else {
                     GenericAd ad = null;
-                    switch (adClass) {
-                        case "AppOpenAd":
-                            ad = new AppOpen(ctx);
-                            break;
-                        case "BannerAd":
-                            ad = new Banner(ctx);
-                            break;
-                        case "InterstitialAd":
-                            ad = new Interstitial(ctx);
-                            break;
-                        case "NativeAd":
-                            ad = new Native(ctx);
-                            break;
-                        case "RewardedAd":
-                            ad = new Rewarded(ctx);
-                            break;
-                        case "RewardedInterstitialAd":
-                            ad = new RewardedInterstitial(ctx);
-                            break;
+                    String id = ctx.optId();
+                    if (id != null && helper.ads.containsKey(id)) {
+                        ad = (GenericAd) helper.getAd(id); // already exists..
+                    } else {
+                        switch (adClass) {
+                            case "AppOpenAd":
+                                ad = new AppOpen(ctx);
+                                break;
+                            case "BannerAd":
+                                ad = new Banner(ctx);
+                                break;
+                            case "InterstitialAd":
+                                ad = new Interstitial(ctx);
+                                break;
+                            case "NativeAd":
+                                ad = new Native(ctx);
+                                break;
+                            case "RewardedAd":
+                                ad = new Rewarded(ctx);
+                                break;
+                            case "RewardedInterstitialAd":
+                                ad = new RewardedInterstitial(ctx);
+                                break;
+                        }
                     }
                     if (ad != null) {
                         ctx.resolve();

@@ -91,31 +91,36 @@ class AMBPlugin: CDVPlugin {
         let ctx = AMBContext(command)
 
         DispatchQueue.main.async {
-            if let adClass = ctx.optString("cls") {
+            let adClass = ctx.optString("cls")
+            if adClass == nil { // class missing..
+                ctx.reject("ad cls is missing")
+            } else {
                 var ad: AMBCoreAd?
-                switch adClass {
-                case "AppOpenAd":
-                    ad = AMBAppOpenAd(ctx)
-                case "BannerAd":
-                    ad = AMBBanner(ctx)
-                case "InterstitialAd":
-                    ad = AMBInterstitial(ctx)
-                case "NativeAd":
-                    ad = AMBNativeAd(ctx)
-                case "RewardedAd":
-                    ad = AMBRewarded(ctx)
-                case "RewardedInterstitialAd":
-                    ad = AMBRewardedInterstitial(ctx)
-                default:
-                    break
+                if let id = ctx.optId(), let existing = AMBCoreAd.ads[id] {
+                    ad = existing // already exists..
+                } else {
+                    switch adClass {
+                    case "AppOpenAd":
+                        ad = AMBAppOpenAd(ctx)
+                    case "BannerAd":
+                        ad = AMBBanner(ctx)
+                    case "InterstitialAd":
+                        ad = AMBInterstitial(ctx)
+                    case "NativeAd":
+                        ad = AMBNativeAd(ctx)
+                    case "RewardedAd":
+                        ad = AMBRewarded(ctx)
+                    case "RewardedInterstitialAd":
+                        ad = AMBRewardedInterstitial(ctx)
+                    default:
+                        break
+                    }
                 }
                 if ad != nil {
                     ctx.resolve()
                 } else {
                     ctx.reject("fail to create ad: \(ctx.optId() ?? "-")")
                 }
-            } else {
-                ctx.reject()
             }
         }
     }
