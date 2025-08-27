@@ -27,9 +27,11 @@ class AMBPlugin: CDVPlugin {
     }
 
     @objc func ready(_ command: CDVInvokedUrlCommand) {
-        readyCallbackId = command.callbackId
-
-        DispatchQueue.global(qos: .background).async {
+        if readyCallbackId == nil {
+            readyCallbackId = command.callbackId
+        }
+        //DispatchQueue.global(qos: .background).async { // -> slow -> not safe!
+        DispatchQueue.main.async {
             self.emit(AMBEvents.ready, data: ["isRunningInTestLab": false])
         }
     }

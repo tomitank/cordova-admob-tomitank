@@ -61,24 +61,38 @@ export class AdMob {
    */
   public async reinitWhenNeeded(callback?: Function) {
     try {
-      await execAsync(NativeActions.ready, []);
+        const readyPromise = execAsync(NativeActions.ready, []);
+        const timeoutPromise = new Promise((resolve, reject) => {
+            setTimeout(()=>reject('error'), 2000); // Max 2 sec..
+        });
+        await Promise.race([timeoutPromise, readyPromise]);
       return false;
     } catch (error) { // reinit only when has error..
       return this.reinit(callback);
     }
   }
 
-  private reinit(callback?: Function) {
-      this.cleanup();
-      if (typeof callback === 'function') {
-        const readyCallback = () => {
-          document.removeEventListener(Events.ready, readyCallback);
+  private reinit(callback?: Function): Promise<boolean> {
+    this.cleanup();
+    return new Promise((resolve) => {
+      const onReady = () => {
+        clearTimeout(timeoutId);
+        document.removeEventListener(Events.ready, onReady);
+        resolve(true);
+        if (typeof callback === 'function') {
           callback();
-        };
-        document.addEventListener(Events.ready, readyCallback);
-      }
+        }
+      };
+
+      const timeoutId = setTimeout(() => { // Max 2 sec..
+        document.removeEventListener(Events.ready, onReady);
+        resolve(false);
+      }, 2000);
+
+      // wait fo ready event..
+      document.addEventListener(Events.ready, onReady);
       channel.onCordovaReady.subscribe(cordovaEventListener);
-      return true;
+    });
   }
 
   private cleanup() {
