@@ -16,6 +16,7 @@ banner.on('size', (res) => ...);
 ```
 
 ## Extras
+
 - Added "admob.reinitWhenNeeded(callback)" function to restart when cordova - admob bridge connection lost
 - Example:
 ```
