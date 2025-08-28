@@ -36,6 +36,7 @@ public class AdMob extends CordovaPlugin implements Helper.Adapter {
     private static final String TAG = "AdMobPlus";
     private final ArrayList<PluginResult> eventQueue = new ArrayList<PluginResult>();
     public Helper helper;
+    private boolean isPluginStarted = false;
     private CallbackContext readyCallbackContext = null;
 
     public static void registerNativeAdViewProviders(Map<String, Native.ViewProvider> providers) {
@@ -58,15 +59,10 @@ public class AdMob extends CordovaPlugin implements Helper.Adapter {
 
         switch (actionKey) {
             case Actions.READY:
-                return executeReady(callbackContext);
+                boolean onlyCheck = args.optBoolean(0, false);
+                return executeReady(callbackContext, onlyCheck);
             case Actions.START:
-                MobileAds.initialize(cordova.getActivity(), status -> {
-                    helper.configForTestLab();
-                    callbackContext.success(new JSONObject(new HashMap<String, Object>() {{
-                        put("version", MobileAds.getVersion());
-                    }}));
-                });
-                break;
+                return startMobileAdsSdk(callbackContext);
             case Actions.CONFIGURE:
             case Actions.CONFIG_REQUEST:
                 ctx.configure(helper);
@@ -136,16 +132,34 @@ public class AdMob extends CordovaPlugin implements Helper.Adapter {
         return true;
     }
 
-    private boolean executeReady(CallbackContext callbackContext) {
-        if (readyCallbackContext == null) {
-            for (PluginResult result : eventQueue) {
-                callbackContext.sendPluginResult(result);
-            }
-            eventQueue.clear();
+    private void startMobileAdsSdk(CallbackContext callbackContext) {
+        if (isPluginStarted == false) {
+            isPluginStarted = true;
+            MobileAds.initialize(cordova.getActivity(), status -> {
+                helper.configForTestLab();
+                callbackContext.success(new JSONObject(new HashMap<String, Object>() {{
+                    put("version", MobileAds.getVersion());
+                }}));
+            });
         } else {
-            Log.e(TAG, "Ready action should only be called once.");
+            callbackContext.success(new JSONObject(new HashMap<String, Object>() {{
+                put("version", MobileAds.getVersion());
+            }}));
         }
-        readyCallbackContext = callbackContext;
+    }
+
+    private boolean executeReady(CallbackContext callbackContext, boolean onlyCheck) {
+        if (!onlyCheck) {
+            if (readyCallbackContext == null) {
+                for (PluginResult result : eventQueue) {
+                    callbackContext.sendPluginResult(result);
+                }
+                eventQueue.clear();
+            } else {
+                Log.i(TAG, "Ready action should only be called once.");
+            }
+            readyCallbackContext = callbackContext;
+        }
         emit(Generated.Events.READY, new HashMap<String, Object>() {{
             put("isRunningInTestLab", helper.isRunningInTestLab());
         }});
@@ -226,6 +240,7 @@ public class AdMob extends CordovaPlugin implements Helper.Adapter {
 
     @Override
     public void onDestroy() {
+        isPluginStarted = false;
         readyCallbackContext = null;
 
         for (Map.Entry<String, Ad> entry : ads.entrySet()) {

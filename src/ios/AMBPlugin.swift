@@ -10,9 +10,11 @@ class AMBPlugin: CDVPlugin {
     }
 
     var readyCallbackId: String!
+    var isPluginStarted: Bool! = false
 
     deinit {
         readyCallbackId = nil
+        isPluginStarted = false
     }
 
     override func pluginInitialize() {
@@ -27,7 +29,9 @@ class AMBPlugin: CDVPlugin {
     }
 
     @objc func ready(_ command: CDVInvokedUrlCommand) {
-        if readyCallbackId == nil {
+        let ctx = AMBContext(command)
+        let onlyCheck = ctx.opt0() as? Bool ?? false
+        if !onlyCheck {
             readyCallbackId = command.callbackId
         }
         //DispatchQueue.global(qos: .background).async { // -> slow -> not safe!
@@ -60,9 +64,14 @@ class AMBPlugin: CDVPlugin {
 
     @objc func start(_ command: CDVInvokedUrlCommand) {
         let ctx = AMBContext(command)
-        MobileAds.shared.start(completionHandler: { _ in
+        if isPluginStarted == false {
+            isPluginStarted = true
+            MobileAds.shared.start(completionHandler: { _ in
+                ctx.resolve(["version": string(for: MobileAds.shared.versionNumber)])
+            })
+        } else {
             ctx.resolve(["version": string(for: MobileAds.shared.versionNumber)])
-        })
+        }
     }
 
     @objc func setAppMuted(_ command: CDVInvokedUrlCommand) {

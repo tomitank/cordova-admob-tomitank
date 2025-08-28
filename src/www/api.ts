@@ -74,8 +74,7 @@ export class MobileAd<T extends MobileAdOptions = MobileAdOptions> {
 
     const removeFn = () => {
       document.removeEventListener(type, listener, useCapture);
-      const index = this.eventRemovers.indexOf(removeFn);
-      if (index !== -1) this.eventRemovers.splice(index, 1);
+      this.eventRemovers = this.eventRemovers.filter(fn => fn !== removeFn);
     };
 
     this.eventRemovers.push(removeFn);
