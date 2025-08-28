@@ -132,7 +132,7 @@ public class AdMob extends CordovaPlugin implements Helper.Adapter {
         return true;
     }
 
-    private void startMobileAdsSdk(CallbackContext callbackContext) {
+    private boolean startMobileAdsSdk(CallbackContext callbackContext) {
         if (isPluginStarted == false) {
             isPluginStarted = true;
             MobileAds.initialize(cordova.getActivity(), status -> {
@@ -146,6 +146,7 @@ public class AdMob extends CordovaPlugin implements Helper.Adapter {
                 put("version", MobileAds.getVersion());
             }}));
         }
+        return true;
     }
 
     private boolean executeReady(CallbackContext callbackContext, boolean onlyCheck) {
