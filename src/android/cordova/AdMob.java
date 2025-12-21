@@ -215,17 +215,15 @@ public class AdMob extends CordovaPlugin implements Helper.Adapter {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        for (Map.Entry<String, Ad> entry : ads.entrySet()) {
-            AdBase ad = (AdBase) entry.getValue();
-            ad.onConfigurationChanged(newConfig);
+        for (Ad ad : new ArrayList<>(ads.values())) {
+            ((AdBase) ad).onConfigurationChanged(newConfig);
         }
     }
 
     @Override
     public void onPause(boolean multitasking) {
-        for (Map.Entry<String, Ad> entry : ads.entrySet()) {
-            AdBase ad = (AdBase) entry.getValue();
-            ad.onPause(multitasking);
+        for (Ad ad : new ArrayList<>(ads.values())) {
+            ((AdBase) ad).onPause(multitasking);
         }
         super.onPause(multitasking);
     }
@@ -233,9 +231,8 @@ public class AdMob extends CordovaPlugin implements Helper.Adapter {
     @Override
     public void onResume(boolean multitasking) {
         super.onResume(multitasking);
-        for (Map.Entry<String, Ad> entry : ads.entrySet()) {
-            AdBase ad = (AdBase) entry.getValue();
-            ad.onResume(multitasking);
+        for (Ad ad : new ArrayList<>(ads.values())) {
+            ((AdBase) ad).onResume(multitasking);
         }
     }
 
@@ -244,9 +241,12 @@ public class AdMob extends CordovaPlugin implements Helper.Adapter {
         isPluginStarted = false;
         readyCallbackContext = null;
 
-        for (Map.Entry<String, Ad> entry : ads.entrySet()) {
-            AdBase ad = (AdBase) entry.getValue();
-            ad.onDestroy();
+        for (Ad ad : new ArrayList<>(ads.values())) {
+            try {
+                ((AdBase) ad).onDestroy();
+            } catch (Exception e) {
+                Log.e(TAG, "Ad destroy failed", e);
+            }
         }
 
         Banner.destroyParentView();
