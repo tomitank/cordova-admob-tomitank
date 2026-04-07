@@ -23,7 +23,7 @@
     "@types/cordova": "^0.0.34",
     "@types/fs-extra": "^11.0.1",
     "@types/plist": "^3.0.2",
-    "cordova": "11.0.0",
+    "cordova": "12.0.0",
     "cordova-plus": "^0.7.0",
     "cordova-ts-hook": "^0.0.3",
     "nx": "16.1.4",
