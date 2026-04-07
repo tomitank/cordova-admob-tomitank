@@ -154,11 +154,11 @@ public class ExecuteContext implements Context {
         } else {
             switch (adSizeObj.optString("orientation")) {
                 case "portrait":
-                    return AdSize.getPortraitAnchoredAdaptiveBannerAdSize(getActivity(), w);
+                    return AdSize.getLargePortraitAnchoredAdaptiveBannerAdSize(getActivity(), w);
                 case "landscape":
-                    return AdSize.getLandscapeAnchoredAdaptiveBannerAdSize(getActivity(), w);
+                    return AdSize.getLargeLandscapeAnchoredAdaptiveBannerAdSize(getActivity(), w);
                 default:
-                    return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(getActivity(), w);
+                    return AdSize.getLargeAnchoredAdaptiveBannerAdSize(getActivity(), w);
             }
         }
         return new AdSize(w, Helper.pxToDp(adSizeObj.optInt("height")));
