@@ -315,14 +315,27 @@ public class Banner extends AdBase {
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                     RelativeLayout.LayoutParams.MATCH_PARENT,
                     RelativeLayout.LayoutParams.MATCH_PARENT);
-            if (isPositionTop()) {
-                params.setMargins(0, this.offset, 0, 0);
-            } else {
-                params.setMargins(0, 0, 0, this.offset);
-            }
-
             ViewGroup contentView = getContentView();
-            if (contentView != null) {
+            if (contentView != null)
+            {
+                int webViewTopMargin = 0;
+                int webViewBottomMargin = 0;
+
+                // cordova-android 16+ edge-to-edge fix
+                View webView = getWebView();
+                ViewGroup.LayoutParams lp = webView.getLayoutParams();
+                if (lp instanceof FrameLayout.LayoutParams) {
+                    FrameLayout.LayoutParams flp = (FrameLayout.LayoutParams) lp;
+                    webViewTopMargin = flp.topMargin;
+                    webViewBottomMargin = flp.bottomMargin;
+                }
+
+                if (isPositionTop()) {
+                    params.setMargins(0, this.offset + webViewTopMargin, 0, 0);
+                } else {
+                    params.setMargins(0, 0, 0, this.offset + webViewBottomMargin);
+                }
+
                 contentView.addView(mRelativeLayout, params);
             } else {
                 Log.e(TAG, "Unable to find content view");
