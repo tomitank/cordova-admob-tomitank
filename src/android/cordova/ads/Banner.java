@@ -322,6 +322,8 @@ public class Banner extends AdBase {
                 int webViewBottomMargin = 0;
 
                 // cordova-android 16+ edge-to-edge fix
+                // cordova set margin to webview when edge-to-edge disabled
+                // we need to consider the margin when calculating the banner position
                 View webView = getWebView();
                 ViewGroup.LayoutParams lp = webView.getLayoutParams();
                 if (lp instanceof FrameLayout.LayoutParams) {
