@@ -7,8 +7,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnPreDrawListener;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,28 +30,22 @@ import static admob.plus.core.Helper.removeFromParentView;
 public class Banner extends AdBase {
     private static final String TAG = "AdMobPlus.Banner";
     @SuppressLint("StaticFieldLeak")
-    private static ViewGroup rootLinearLayout;
+    private static FrameLayout frameLayout = null;
     private static int screenWidth = 0;
+    private static FrameLayout.LayoutParams origWebViewMargins;
+    private static ViewGroup.MarginLayoutParams origParentMargins;
 
     private final AdSize adSize;
     private final int gravity;
-    private final Integer offset;
+    private Integer offset;
     private AdView mAdView;
-    private RelativeLayout mRelativeLayout = null;
     private AdView mAdViewOld = null;
 
     public Banner(ExecuteContext ctx) {
         super(ctx);
-
         this.adSize = ctx.optAdSize();
         this.gravity = "top".equals(ctx.optPosition()) ? Gravity.TOP : Gravity.BOTTOM;
         this.offset = ctx.optOffset();
-    }
-
-    public static void destroyParentView() {
-        ViewGroup vg = getParentView(rootLinearLayout);
-        if (vg != null) vg.removeAllViews();
-        rootLinearLayout = null;
     }
 
     private static void runJustBeforeBeingDrawn(final View view, final Runnable runnable) {
@@ -150,9 +143,9 @@ public class Banner extends AdBase {
             mAdView.resume();
             mAdView.setVisibility(View.VISIBLE);
         } else {
-            ViewGroup wvParentView = getParentView(getWebView());
-            if (rootLinearLayout != wvParentView) {
-                removeFromParentView(rootLinearLayout);
+            ViewGroup contentView = getContentView();
+            if (getParentView(frameLayout) != contentView) {
+                removeFromParentView(frameLayout);
                 addBannerView();
             }
         }
@@ -226,10 +219,43 @@ public class Banner extends AdBase {
             removeBannerView(mAdViewOld);
             mAdViewOld = null;
         }
-        if (mRelativeLayout != null) {
-            removeFromParentView(mRelativeLayout);
-            mRelativeLayout = null;
+        if (frameLayout != null) {
+            frameLayout.removeAllViews();
+            removeFromParentView(frameLayout);
+            frameLayout = null;
         }
+
+        // Hack: revert original margins
+        View webView = getWebView();
+        ViewGroup wvParent = getParentView(webView);
+
+        // cordova-android >= 15
+        if (wvParent != null && origParentMargins != null)
+        {
+            ViewGroup.LayoutParams params = wvParent.getLayoutParams();
+            ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) params;
+            marginParams.setMargins(
+                origParentMargins.leftMargin,
+                origParentMargins.topMargin,
+                origParentMargins.rightMargin,
+                origParentMargins.bottomMargin);
+            wvParent.setLayoutParams(marginParams);
+        }
+
+        // cordova-android <= 14
+        if (webView != null && origWebViewMargins != null)
+        {
+            FrameLayout.LayoutParams wvParams = (FrameLayout.LayoutParams) webView.getLayoutParams();
+            wvParams.setMargins(
+                origWebViewMargins.leftMargin,
+                origWebViewMargins.topMargin,
+                origWebViewMargins.rightMargin,
+                origWebViewMargins.bottomMargin);
+            webView.setLayoutParams(wvParams);
+        }
+
+        origWebViewMargins = null;
+        origParentMargins = null;
 
         super.onDestroy();
     }
@@ -242,12 +268,24 @@ public class Banner extends AdBase {
 
     private void addBannerView() {
         if (mAdView == null) return;
+
+        // Added by Tamas Kuzmics (tomitank)
+        // cordova-android 15+ edge-to-edge fix
+        // cordova set margin to webView when edge-to-edge disabled
+        // we need to consider the margin when calculating the banner position
+        View webView = getWebView();
+        FrameLayout.LayoutParams wvParams = (FrameLayout.LayoutParams) webView.getLayoutParams();
+
+        if (getParentView(mAdView) == frameLayout && frameLayout != null) return;
+
+        if (origWebViewMargins == null) {
+            origWebViewMargins = new FrameLayout.LayoutParams(wvParams);
+        }
+
         if (this.offset == null) {
-            if (getParentView(mAdView) == rootLinearLayout && rootLinearLayout != null) return;
-            addBannerViewWithLinearLayout();
+            addBannerViewWithLinearLayout(webView, wvParams);
         } else {
-            if (getParentView(mAdView) == mRelativeLayout && mRelativeLayout != null) return;
-            addBannerViewWithRelativeLayout();
+            addBannerViewWithRelativeLayout(wvParams);
         }
 
         ViewGroup contentView = getContentView();
@@ -258,95 +296,81 @@ public class Banner extends AdBase {
         }
     }
 
-    private void addBannerViewWithLinearLayout() {
-        View webView = getWebView();
-        ViewGroup wvParentView = getParentView(webView);
-        if (rootLinearLayout == null) {
-            rootLinearLayout = new LinearLayout(getActivity());
+    private void addBannerViewWithLinearLayout(View webView,FrameLayout.LayoutParams wvParams) {
+        this.offset = 0; // Hack!
+        addBannerViewWithRelativeLayout(wvParams);
+        this.offset = null;
+
+        final ViewGroup wvParent = getParentView(webView);
+        final boolean hasDifferentParent = wvParent != null && wvParent != getContentView();
+
+        // store parent original margins
+        if (hasDifferentParent && origParentMargins == null) {
+            ViewGroup.LayoutParams params = wvParent.getLayoutParams();
+            ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) params;
+            origParentMargins = new ViewGroup.MarginLayoutParams(marginParams);
         }
 
-        if (wvParentView != null && wvParentView != rootLinearLayout) {
-            wvParentView.removeView(webView);
-            LinearLayout content = (LinearLayout) rootLinearLayout;
-            content.setOrientation(LinearLayout.VERTICAL);
-            rootLinearLayout.setLayoutParams(new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    0.0F));
-            webView.setLayoutParams(new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    1.0F));
-            rootLinearLayout.addView(webView);
+        // Hack: add margin after banner height is determined
+        mAdView.post(() -> {
+            if (mAdView == null || wvParent == null) return;
+            int bannerHeight = mAdView.getHeight();
+            int topMargin    = isPositionTop() ? bannerHeight : 0;
+            int bottomMargin = isPositionTop() ? 0 : bannerHeight;
 
-            ViewGroup view = getParentView(rootLinearLayout);
-            if (view != wvParentView) {
-                removeFromParentView(rootLinearLayout);
-                wvParentView.addView(rootLinearLayout);
+            if (hasDifferentParent) { // cordova-android >= 15
+                if (origParentMargins == null) return; // for safety
+                ViewGroup.LayoutParams params = wvParent.getLayoutParams();
+                ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) params;
+                marginParams.setMargins(
+                    origParentMargins.leftMargin,
+                    origParentMargins.topMargin + topMargin,
+                    origParentMargins.rightMargin,
+                    origParentMargins.bottomMargin + bottomMargin
+                );
+                wvParent.setLayoutParams(marginParams);
+            } else { // set webView when contentView == parent (cordova-android <= 14)
+                if (origWebViewMargins == null) return; // for safety
+                wvParams.setMargins(
+                    origWebViewMargins.leftMargin,
+                    origWebViewMargins.topMargin + topMargin,
+                    origWebViewMargins.rightMargin,
+                    origWebViewMargins.bottomMargin + bottomMargin
+                );
+                webView.setLayoutParams(wvParams);
             }
-        }
-
-        removeFromParentView(mAdView);
-        if (isPositionTop()) {
-            rootLinearLayout.addView(mAdView, 0);
-        } else {
-            rootLinearLayout.addView(mAdView);
-        }
-
-        ViewGroup contentView = getContentView();
-        if (contentView != null) {
-            for (int i = 0; i < contentView.getChildCount(); i++) {
-                View view = contentView.getChildAt(i);
-                if (view instanceof RelativeLayout) {
-                    view.bringToFront();
-                }
-            }
-        }
+        });
     }
 
-    private void addBannerViewWithRelativeLayout() {
-        RelativeLayout.LayoutParams paramsContent = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.MATCH_PARENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT);
-        paramsContent.addRule(isPositionTop() ? RelativeLayout.ALIGN_PARENT_TOP : RelativeLayout.ALIGN_PARENT_BOTTOM);
+    private void addBannerViewWithRelativeLayout(FrameLayout.LayoutParams wvParams) {
+        FrameLayout.LayoutParams addParams = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        if (mRelativeLayout == null) {
-            mRelativeLayout = new RelativeLayout(getActivity());
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.MATCH_PARENT,
-                    RelativeLayout.LayoutParams.MATCH_PARENT);
+        if (origWebViewMargins == null) return; // for safety
+        addParams.gravity = isPositionTop() ? Gravity.TOP : Gravity.BOTTOM;
+        int topOffset     = isPositionTop() ? this.offset + origWebViewMargins.topMargin : 0;
+        int bottomOffset  = isPositionTop() ? 0 : this.offset + origWebViewMargins.bottomMargin;
+        addParams.setMargins(0, topOffset, 0, bottomOffset);
+
+        if (frameLayout == null) {
+            frameLayout = new FrameLayout(getActivity());
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT);
+
             ViewGroup contentView = getContentView();
             if (contentView != null)
             {
-                int webViewTopMargin = 0;
-                int webViewBottomMargin = 0;
-
-                // cordova-android 16+ edge-to-edge fix
-                // cordova set margin to webview when edge-to-edge disabled
-                // we need to consider the margin when calculating the banner position
-                View webView = getWebView();
-                ViewGroup.LayoutParams lp = webView.getLayoutParams();
-                if (lp instanceof FrameLayout.LayoutParams) {
-                    FrameLayout.LayoutParams flp = (FrameLayout.LayoutParams) lp;
-                    webViewTopMargin = flp.topMargin;
-                    webViewBottomMargin = flp.bottomMargin;
-                }
-
-                if (isPositionTop()) {
-                    params.setMargins(0, this.offset + webViewTopMargin, 0, 0);
-                } else {
-                    params.setMargins(0, 0, 0, this.offset + webViewBottomMargin);
-                }
-
-                contentView.addView(mRelativeLayout, params);
+                contentView.addView(frameLayout, params);
             } else {
                 Log.e(TAG, "Unable to find content view");
             }
         }
 
         removeFromParentView(mAdView);
-        mRelativeLayout.addView(mAdView, paramsContent);
-        mRelativeLayout.bringToFront();
+        frameLayout.addView(mAdView, addParams);
+        frameLayout.bringToFront();
     }
 
     private boolean isPositionTop() {

@@ -249,8 +249,6 @@ public class AdMob extends CordovaPlugin implements Helper.Adapter {
             }
         }
 
-        Banner.destroyParentView();
-
         super.onDestroy();
     }
 

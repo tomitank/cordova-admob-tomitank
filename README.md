@@ -4,6 +4,9 @@ Based on AdMob Plus Cordova with updated SDK-s
 - Android: 25.1.0
 - iOS: 13.2.0
 
+# Support cordova-android 15 (edge-to-edge)
+- Solve all crash!
+
 [![](https://img.shields.io/static/v1?label=Sponsor%20Me&style=for-the-badge&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/tomitank)
 
 ## Breaking changes
