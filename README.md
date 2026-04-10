@@ -1,4 +1,5 @@
-Please support me:
+# If my work is important to you:
+
 [![](https://img.shields.io/static/v1?label=Sponsor%20Me&style=for-the-badge&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/tomitank)
 
 # [Cordova AdMob tomitank]
