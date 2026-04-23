@@ -1,6 +1,5 @@
 package admob.plus.cordova.ads;
 
-import android.annotation.SuppressLint;
 import android.content.res.Configuration;
 import android.util.Log;
 import android.view.Gravity;
@@ -29,17 +28,15 @@ import static admob.plus.core.Helper.removeFromParentView;
 
 public class Banner extends AdBase {
     private static final String TAG = "AdMobPlus.Banner";
-    @SuppressLint("StaticFieldLeak")
-    private static FrameLayout frameLayout = null;
     private static int screenWidth = 0;
-    private static FrameLayout.LayoutParams origWebViewMargins;
-    private static ViewGroup.MarginLayoutParams origParentMargins;
-
     private final AdSize adSize;
     private final int gravity;
     private Integer offset;
     private AdView mAdView;
     private AdView mAdViewOld = null;
+    private FrameLayout frameLayout = null;
+    private FrameLayout.LayoutParams origWebViewMargins;
+    private ViewGroup.MarginLayoutParams origParentMargins;
 
     public Banner(ExecuteContext ctx) {
         super(ctx);
