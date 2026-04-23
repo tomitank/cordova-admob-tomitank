@@ -5,7 +5,7 @@
 # [Cordova AdMob tomitank]
 
 Based on AdMob Plus Cordova with updated SDK-s
-- Android: 25.1.0
+- Android: 25.2.0
 - iOS: 13.2.0
 
 # Support cordova-android 15 (edge-to-edge)
