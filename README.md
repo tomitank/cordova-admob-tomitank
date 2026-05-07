@@ -4,12 +4,12 @@
 
 # [Cordova AdMob tomitank]
 
-Based on AdMob Plus Cordova with updated SDK-s
+Based on AdMob Plus Cordova with latest SDKs, BUT!
+- Support cordova-android 15 (edge-to-edge)
+- Support SPM (Swift Package Manager)
+- Support cordova-ios 7.x.x and 8.x.x
 - Android: 25.2.0
 - iOS: 13.2.0
-
-# Support cordova-android 15 (edge-to-edge)
-- Solve all crash!
 
 ## Breaking changes
 
